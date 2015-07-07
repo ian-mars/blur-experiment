@@ -32,7 +32,7 @@ topPriorityLevel = MaxPriority(window);
 % Get the centre coordinate of the window
 [xCenter, yCenter] = RectCenter(windowRect);
 
-% here is a git comment
+
 
 
 %create stimuli and response vectors
