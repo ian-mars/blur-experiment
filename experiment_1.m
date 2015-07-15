@@ -2,9 +2,24 @@ close all;
 clear all;
 sca;
 
+% ask for subject id, defaulting to 'nobody'
+subjectID = DefaultInput('Subject ID: ', 'nobody');
+fPath = strcat('data/', subjectID, '_responses.mat');
+
+% if data has already been gathered, load it
+if exist(fPath, 'file') == 2
+    load(fPath);
+else  % if this is a new subject, create the file object we'll want to save
+    file.subjectID = subjectID;
+    file.responseDict = containers.Map();
+    file.stimulusList = ['a', 'b', 'c', 'd'];  % TODO grab big list of files to load instead
+end
+
+saveData(file);
+
 PsychDefaultSetup(2);
 %skip sync test to work with my computer
-%Screen('Preference', 'SkipSyncTests', 1); 
+% Screen('Preference', 'SkipSyncTests', 1); 
 
 screenNumber = max(Screen('Screens'));
 
@@ -136,6 +151,7 @@ for trial = 1:40
     while respToBeMade
        [keyIsDown,secs, keyCode] = KbCheck;
        if keyCode(escape)
+           saveData(file);
            ShowCursor;
            sca;
            return
@@ -189,4 +205,7 @@ for trial = 1:40
     end
 end
 
+saveData(file);
 sca;
+
+
