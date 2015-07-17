@@ -1,9 +1,12 @@
 close all;
 clear all;
 sca;
+%get image directory
+im_names = dir('~/Desktop/blur_stimuli/*.png');
+im_nums = 1:length(im_names);
 
 % ask for subject id, defaulting to 'nobody'
-subjectID = DefaultInput('Subject ID: ', 'nobody');
+subjectID = defaultInput('Subject ID: ', 'nobody');
 fPath = strcat('data/', subjectID, '_responses.mat');
 
 % if data has already been gathered, load it
@@ -12,7 +15,8 @@ if exist(fPath, 'file') == 2
 else  % if this is a new subject, create the file object we'll want to save
     file.subjectID = subjectID;
     file.responseDict = containers.Map();
-    file.stimulusList = ['a', 'b', 'c', 'd'];  % TODO grab big list of files to load instead
+    file.stimulusList = Shuffle(im_nums) %['a', 'b', 'c', 'd'];  % TODO grab big list of files to load instead
+    
 end
 
 saveData(file);
@@ -29,7 +33,7 @@ grey = white / 2;
 black = BlackIndex(screenNumber);
 
 %open screen
-[window, windowRect] = PsychImaging('OpenWindow', screenNumber, grey,...
+[window, windowRect] = PsychImaging('OpenWindow', screenNumber, black,...
     [], 32, 2,[], [],  kPsychNeed32BPCFloat);
 
 %get screen size
@@ -55,15 +59,12 @@ topPriorityLevel = MaxPriority(window);
 
 
 
-%-------------------------------------
-%create stimuli and response vectors
-%-------------------------------------
 
-%get image directory
-im_names = dir('~/Desktop/blur_stimuli/*.png');
-%create stimulus vector of randomized numbers
-im_nums = 1:length(im_names);
-im_nums = Shuffle(im_nums);
+
+
+% %create stimulus vector of randomized numbers
+% im_nums = 1:length(im_names);
+% im_nums = Shuffle(im_nums);
 
 
 
@@ -87,7 +88,7 @@ im_nums = Shuffle(im_nums);
 %Timing information
 
 % Presentation Time in seconds and frames
-presTimeSecs = 0.2;
+presTimeSecs = 0.5;
 presTimeFrames = round(presTimeSecs / ifi);
 
 % Interstimulus interval time in seconds and frames
@@ -98,17 +99,20 @@ isiTimeFrames = round(isiTimeSecs / ifi);
 waitframes = 1;
 
 
+respIm = imread('responses_image.png'); 
 
 
-
-% %keyboard info
-% 
-% a = KbName('a');
-% b = KbName('b');
-% c = KbName('c');
-% d = KbName('d');
-% escape = KbName('ESCAPE');
-
+ %keyboard info
+ 
+ a = KbName('a');
+ w = KbName('w');
+ s = KbName('s');
+ d = KbName('d');
+ up = KbName('UpArrow');
+ down = KbName('DownArrow');
+ left = KbName('LeftArrow');
+ right = KbName('RightArrow');
+escape = KbName('ESCAPE');
 
 
 
@@ -124,7 +128,7 @@ for trial = 1:length(im_nums)
     Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
     
     if trial == 1
-        DrawFormattedText(window, 'Press Any Key To Begin', 'center', 'center', black);
+        DrawFormattedText(window, 'Press Any Key To Begin', 'center', 'center', white);
         Screen('Flip', window);
         KbStrokeWait;
     end
@@ -135,7 +139,7 @@ for trial = 1:length(im_nums)
     for frame = 1:isiTimeFrames - 1
 
         % Draw the fixation point
-        Screen('DrawDots', window, [xCenter; yCenter], 10, black, [], 2);
+        Screen('DrawDots', window, [xCenter; yCenter], 10, white, [], 2);
 
         % Flip to the screen
         vbl = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
@@ -164,52 +168,27 @@ for trial = 1:length(im_nums)
     end
      
     Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
+    
+    respTex = Screen('MakeTexture', window, respIm);
 
-    Screen('DrawDots', window, [xCenter; yCenter], 10, black, [], 2);
+    Screen('DrawTexture', window, respTex);
 
+    Screen('TextSize', window, 40);
+    
+    DrawFormattedText(window, 'Valid Responses:', 'center', screenYpixels * .1, white);
+    
     vbl = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
 
     respToBeMade = true;
     while respToBeMade
        [keyIsDown,secs, keyCode] = KbCheck;
        if keyCode(escape)
-           saveData(file);
+           %saveData(file);
            ShowCursor;
            sca;
            return
-%        elseif keyCode(a)
-%            if stim == 'a'
-%                response = 1;
-%                respToBeMade = false;
-%            else
-%                response = 0;
-%                respToBeMade = false;
-%            end
-%        elseif keyCode(b)
-%            if stim == 'b'
-%                response = 1;
-%                respToBeMade = false;
-%            else
-%                response = 0;
-%                respToBeMade = false;
-%            end
-%        elseif keyCode(c)
-%            if stim == 'c'
-%                response = 1;
-%                respToBeMade = false;
-%            else
-%                response = 0;
-%                respToBeMade = false;
-%            end
-%        elseif keyCode(d)
-%            if stim == 'd'
-%                response = 1;
-%                respToBeMade = false;
-%            else
-%                response = 0;
-%                respToBeMade = false;
-%            end
-%        end
+        
+       end
     end
     
 %     if stim == 'a'
@@ -227,7 +206,7 @@ for trial = 1:length(im_nums)
 %     end
 end
 
-saveData(file);
+%saveData(file);
 sca;
 
 
