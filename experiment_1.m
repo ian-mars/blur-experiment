@@ -1,6 +1,8 @@
 close all;
 clear all;
 sca;
+
+try
 %get image directory
 im_names = dir('~/Desktop/blur_stimuli/*.png');
 im_nums = 1:length(im_names);
@@ -227,5 +229,11 @@ end
 
 saveData(file);
 sca;
+catch
+    sca;
+    psychrethrow(psychlasterror);
+    error = psychlasterror; error.stack
+    ShowCursor
+end
 
 
