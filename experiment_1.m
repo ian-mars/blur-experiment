@@ -212,19 +212,19 @@ for trial = 1:length(im_nums)
 %        end
     end
     
-    if stim == 'a'
-        respVect(1) = respVect(1) + response;
-        countVect(1) = countVect(1) + 1;
-    elseif stim == 'b'
-        respVect(2) = respVect(2) + response;
-        countVect(2) = countVect(2) + 1;cd
-    elseif stim == 'c'
-        respVect(3) = respVect(3) + response;
-        countVect(3) = countVect(3) + 1;
-    else
-        respVect(4) = respVect(4) + response;
-        countVect(4) = countVect(4) + 1;
-    end
+%     if stim == 'a'
+%         respVect(1) = respVect(1) + response;
+%         countVect(1) = countVect(1) + 1;
+%     elseif stim == 'b'
+%         respVect(2) = respVect(2) + response;
+%         countVect(2) = countVect(2) + 1;cd
+%     elseif stim == 'c'
+%         respVect(3) = respVect(3) + response;
+%         countVect(3) = countVect(3) + 1;
+%     else
+%         respVect(4) = respVect(4) + response;
+%         countVect(4) = countVect(4) + 1;
+%     end
 end
 
 saveData(file);
