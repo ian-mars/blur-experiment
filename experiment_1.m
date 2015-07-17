@@ -31,9 +31,10 @@ white = WhiteIndex(screenNumber);
 grey = white / 2;
 black = BlackIndex(screenNumber);
 
+stereoMode = 4;
 %open screen
 [window, windowRect] = PsychImaging('OpenWindow', screenNumber, black,...
-    [], 32, 2,[], [],  kPsychNeed32BPCFloat);
+    [], 32, 2,stereoMode, [],  kPsychNeed32BPCFloat);
 
 %get screen size
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
