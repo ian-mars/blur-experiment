@@ -97,7 +97,7 @@ isiTimeFrames = round(isiTimeSecs / ifi);
 waitframes = 1;
 
 
-respIm = imread('responses_image.png'); 
+respIm = fliplr(imread('responses_image.png')); 
 
 
  %keyboard info
@@ -122,13 +122,13 @@ for trial = 1:length(im_nums)
     %stim = stimVect(trial);
     im_num = file.stimulusList(file.respNum);
     im_name = im_names(im_num).name;
-    theImage = imread(strcat('~/Desktop/blur_stimuli/', im_name));
+    theImage = fliplr(imread(strcat('~/Desktop/blur_stimuli/', im_name)));
     
     
     Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
     
     if trial == 1
-        DrawFormattedText(window, 'Press Any Key To Begin', 'center', 'center', white);
+        DrawFormattedText(window, 'Press Any Key To Begin', 'center', 'center', white, [], 1);
         Screen('Flip', window);
         KbStrokeWait;
     end
@@ -175,7 +175,7 @@ for trial = 1:length(im_nums)
 
     Screen('TextSize', window, 40);
     
-    DrawFormattedText(window, 'Valid Responses:', 'center', screenYpixels * .1, white);
+    DrawFormattedText(window, 'Valid Responses:', 'center', screenYpixels * .1, white, [], 1);
     
     vbl = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
 
