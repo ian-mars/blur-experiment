@@ -99,8 +99,10 @@ isiTimeFrames = round(isiTimeSecs / ifi);
 waitframes = 1;
 
 
-respIm = fliplr(imread('responses_image.png')); 
-
+respIm = imread('responses_image.png'); 
+respIm[:,:,1] = fliplr(respIm[:,:,1]);
+respIm[:,:,2] = fliplr(respIm[:,:,2]);
+respIm[:,:,3] = fliplr(respIm[:,:,3]);
 
  %keyboard info
  
@@ -124,8 +126,10 @@ for trial = 1:length(im_nums)
     %stim = stimVect(trial);
     im_num = file.stimulusList(file.respNum);
     im_name = im_names(im_num).name;
-    theImage = fliplr(imread(strcat('~/Desktop/blur_stimuli/', im_name)));
-    
+    theImage = imread(strcat('~/Desktop/blur_stimuli/', im_name));
+    theImage[:,:,1] = fliplr(theImage[:,:,1]);
+    theImage[:,:,2] = fliplr(theImage[:,:,2]);
+    theImage[:,:,3] = fliplr(theImage[:,:,3]);
     
     Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
     
