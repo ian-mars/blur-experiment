@@ -16,7 +16,7 @@ else  % if this is a new subject, create the file object we'll want to save
     file.subjectID = subjectID;
     file.responseDict = containers.Map();
     file.stimulusList = Shuffle(im_nums) %['a', 'b', 'c', 'd'];  % TODO grab big list of files to load instead
-    
+    file.respNum = 1
 end
 
 saveData(file);
@@ -88,7 +88,7 @@ topPriorityLevel = MaxPriority(window);
 %Timing information
 
 % Presentation Time in seconds and frames
-presTimeSecs = 0.5;
+presTimeSecs = 2;
 presTimeFrames = round(presTimeSecs / ifi);
 
 % Interstimulus interval time in seconds and frames
@@ -122,7 +122,9 @@ escape = KbName('ESCAPE');
 for trial = 1:length(im_nums)
     
     %stim = stimVect(trial);
-    theImage = imread(strcat('~/Desktop/blur_stimuli/', im_names(im_nums(trial)).name));
+    im_num = file.stimulusList(file.respNum);
+    im_name = im_names(im_num).name;
+    theImage = imread(strcat('~/Desktop/blur_stimuli/', im_name));
     
     
     Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
@@ -183,30 +185,49 @@ for trial = 1:length(im_nums)
     while respToBeMade
        [keyIsDown,secs, keyCode] = KbCheck;
        if keyCode(escape)
-           %saveData(file);
+           saveData(file);
            ShowCursor;
            sca;
            return
-        
+       elseif keyCode(a)
+           file.responseDict(im_name) = 'a'
+           file.respNum = file.respNum + 1
+           respToBeMade = false
+       elseif keyCode(w)
+           file.responseDict(im_name) = 'w'
+           file.respNum = file.respNum + 1
+           respToBeMade = false
+       elseif keyCode(s)
+           file.responseDict(im_name) = 's'
+           file.respNum = file.respNum + 1
+           respToBeMade = false
+       elseif keyCode(d)
+           file.responseDict(im_name) = 'd'
+           file.respNum = file.respNum + 1
+           respToBeMade = false
+       elseif keyCode(up)
+           file.responseDict(im_name) = 'up'
+           file.respNum = file.respNum + 1
+           respToBeMade = false
+       elseif keyCode(down)
+           file.responseDict(im_name) = 'down'
+           file.respNum = file.respNum + 1
+           respToBeMade = false
+       elseif keyCode(right)
+           file.responseDict(im_name) = 'right'
+           file.respNum = file.respNum + 1
+           respToBeMade = false
+       elseif keyCode(left)
+           file.responseDict(im_name) = 'left'
+           file.respNum = file.respNum + 1
+           respToBeMade = false
        end
     end
     
-%     if stim == 'a'
-%         respVect(1) = respVect(1) + response;
-%         countVect(1) = countVect(1) + 1;
-%     elseif stim == 'b'
-%         respVect(2) = respVect(2) + response;
-%         countVect(2) = countVect(2) + 1;cd
-%     elseif stim == 'c'
-%         respVect(3) = respVect(3) + response;
-%         countVect(3) = countVect(3) + 1;
-%     else
-%         respVect(4) = respVect(4) + response;
-%         countVect(4) = countVect(4) + 1;
-%     end
+
 end
 
-%saveData(file);
+saveData(file);
 sca;
 
 
