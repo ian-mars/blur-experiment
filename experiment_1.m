@@ -32,6 +32,9 @@ black = BlackIndex(screenNumber);
 [window, windowRect] = PsychImaging('OpenWindow', screenNumber, grey,...
     [], 32, 2,[], [],  kPsychNeed32BPCFloat);
 
+%get screen size
+[screenXpixels, screenYpixels] = Screen('WindowSize', window);
+
 %flip to clear
 Screen('Flip', window);
 
@@ -47,23 +50,35 @@ topPriorityLevel = MaxPriority(window);
 % Get the centre coordinate of the window
 [xCenter, yCenter] = RectCenter(windowRect);
 
+% % Set up alpha-blending for smooth (anti-aliased) lines
+% Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 
 
 
+%-------------------------------------
 %create stimuli and response vectors
+%-------------------------------------
 
-%number of trials
-numRepeats = 10;
+%get image directory
+im_names = dir('~/Desktop/blur_stimuli/*.png');
+%create stimulus vector of randomized numbers
+im_nums = 1:length(im_names);
+im_nums = Shuffle(im_nums);
 
-%create stimulus vector
-stimuli = ['a', 'b', 'c', 'd'];
-stimVect = Shuffle(repmat(stimuli, 1, numRepeats));
 
-%response vector
-respVect = zeros(1, 4);
 
-%vector to count # of times stimulus is presented
-countVect = zeros(1, 4);
+% %number of trials
+% numRepeats = 10;
+% 
+% %create stimulus vector
+% stimuli = ['a', 'b', 'c', 'd'];
+% stimVect = Shuffle(repmat(stimuli, 1, numRepeats));
+% 
+% %response vector
+% respVect = zeros(1, 4);
+% 
+% %vector to count # of times stimulus is presented
+% countVect = zeros(1, 4);
 
 
 
@@ -86,13 +101,13 @@ waitframes = 1;
 
 
 
-%keyboard info
-
-a = KbName('a');
-b = KbName('b');
-c = KbName('c');
-d = KbName('d');
-escape = KbName('ESCAPE');
+% %keyboard info
+% 
+% a = KbName('a');
+% b = KbName('b');
+% c = KbName('c');
+% d = KbName('d');
+% escape = KbName('ESCAPE');
 
 
 
@@ -100,9 +115,11 @@ escape = KbName('ESCAPE');
 
 %Experimental Loop
 
-for trial = 1:40
+for trial = 1:length(im_nums)
     
-    stim = stimVect(trial);
+    %stim = stimVect(trial);
+    theImage = imread(strcat('~/Desktop/blur_stimuli/', im_names(im_nums(trial)).name));
+    
     
     Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
     
@@ -126,17 +143,22 @@ for trial = 1:40
     
     for frame = 1:presTimeFrames
 
-        % Set the right blend function for drawing the gabors
-        Screen('BlendFunction', window, 'GL_ONE', 'GL_ZERO');
-        
-        Screen('TextSize', window, 80);
-        DrawFormattedText(window, stim, 'center', 'center', white);
-        
-        
+%         % Set the right blend function for drawing the gabors
+%         Screen('BlendFunction', window, 'GL_ONE', 'GL_ZERO');
+%         
+%         Screen('TextSize', window, 80);
+%         DrawFormattedText(window, stim, 'center', 'center', white);
         Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
+        %make image texture
+        imTex = Screen('MakeTexture', window, theImage);
+        %draw texture
+        Screen('DrawTexture', window, imTex, [], [], 0);
         
-        Screen('DrawDots', window, [xCenter; yCenter], 10, black, [], 2);
-
+        
+%         Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
+%         
+%         Screen('DrawDots', window, [xCenter; yCenter], 10, black, [], 2);
+% 
         vbl = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
         
     end
@@ -155,39 +177,39 @@ for trial = 1:40
            ShowCursor;
            sca;
            return
-       elseif keyCode(a)
-           if stim == 'a'
-               response = 1;
-               respToBeMade = false;
-           else
-               response = 0;
-               respToBeMade = false;
-           end
-       elseif keyCode(b)
-           if stim == 'b'
-               response = 1;
-               respToBeMade = false;
-           else
-               response = 0;
-               respToBeMade = false;
-           end
-       elseif keyCode(c)
-           if stim == 'c'
-               response = 1;
-               respToBeMade = false;
-           else
-               response = 0;
-               respToBeMade = false;
-           end
-       elseif keyCode(d)
-           if stim == 'd'
-               response = 1;
-               respToBeMade = false;
-           else
-               response = 0;
-               respToBeMade = false;
-           end
-       end
+%        elseif keyCode(a)
+%            if stim == 'a'
+%                response = 1;
+%                respToBeMade = false;
+%            else
+%                response = 0;
+%                respToBeMade = false;
+%            end
+%        elseif keyCode(b)
+%            if stim == 'b'
+%                response = 1;
+%                respToBeMade = false;
+%            else
+%                response = 0;
+%                respToBeMade = false;
+%            end
+%        elseif keyCode(c)
+%            if stim == 'c'
+%                response = 1;
+%                respToBeMade = false;
+%            else
+%                response = 0;
+%                respToBeMade = false;
+%            end
+%        elseif keyCode(d)
+%            if stim == 'd'
+%                response = 1;
+%                respToBeMade = false;
+%            else
+%                response = 0;
+%                respToBeMade = false;
+%            end
+%        end
     end
     
     if stim == 'a'
