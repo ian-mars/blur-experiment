@@ -21,8 +21,6 @@ end
 saveData(file);
 
 PsychDefaultSetup(2);
-%skip sync test to work with my computer
-% Screen('Preference', 'SkipSyncTests', 1); 
 
 screenNumber = max(Screen('Screens'));
 
