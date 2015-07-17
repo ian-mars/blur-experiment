@@ -4,7 +4,6 @@ sca;
 %get image directory
 im_names = dir('~/Desktop/blur_stimuli/*.png');
 im_nums = 1:length(im_names);
-
 % ask for subject id, defaulting to 'nobody'
 subjectID = defaultInput('Subject ID: ', 'nobody');
 fPath = strcat('data/', subjectID, '_responses.mat');
