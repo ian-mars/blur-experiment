@@ -127,6 +127,9 @@ for trial = 1:length(im_nums)
     im_num = file.stimulusList(file.respNum);
     im_name = im_names(im_num).name;
     theImage = fliplr(imread(strcat('~/Desktop/blur_stimuli/', im_name)));
+    if file.respNum > length(file.stimulusList)
+        break
+    end 
     
     
     Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
@@ -137,6 +140,13 @@ for trial = 1:length(im_nums)
         KbStrokeWait;
     end
     
+    if mod(trial, 200) == 0
+        DrawFormattedText(window, 'You have seen 200 images feel free to take a break'...
+            , 'center', 'center', white, [], 1);
+        DrawFormattedText(window, 'Press any key to resume', 'center', screenYpixels * .6 , white, [], 1);
+        Screen('Flip', window);
+        KbStrokeWait;
+    end
     Screen('DrawDots', window, [xCenter; yCenter], 10, black, [], 2);
     vbl = Screen('Flip', window);
     
