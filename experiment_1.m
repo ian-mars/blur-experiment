@@ -122,15 +122,15 @@ escape = KbName('ESCAPE');
 %Experimental Loop
 
 for trial = 1:length(im_nums)
-    
-    %stim = stimVect(trial);
-    im_num = file.stimulusList(file.respNum);
-    im_name = im_names(im_num).name;
-    theImage = fliplr(imread(strcat('~/Desktop/blur_stimuli/', im_name)));
     if file.respNum > length(file.stimulusList)
         saveData(file);
         break
     end
+    %stim = stimVect(trial);
+    im_num = file.stimulusList(file.respNum);
+    im_name = im_names(im_num).name;
+    theImage = fliplr(imread(strcat('~/Desktop/blur_stimuli/', im_name)));
+    
     
     
     Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
