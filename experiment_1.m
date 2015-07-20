@@ -128,8 +128,9 @@ for trial = 1:length(im_nums)
     im_name = im_names(im_num).name;
     theImage = fliplr(imread(strcat('~/Desktop/blur_stimuli/', im_name)));
     if file.respNum > length(file.stimulusList)
+        saveData(file);
         break
-    end 
+    end
     
     
     Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
