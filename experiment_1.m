@@ -1,6 +1,16 @@
 close all;
 clear all;
 sca;
+develop_mode = true;
+if develop_mode
+    stereoMode = 0;
+    skipTests = 1;
+    shouldMirrorReverse = false;
+else
+    stereoMode = 4;
+    skipTests=0;
+    shouldMirrorReverse = true;
+end
 
 try
 %get image directory
@@ -16,13 +26,14 @@ if exist(fPath, 'file') == 2
 else  % if this is a new subject, create the file object we'll want to save
     file.subjectID = subjectID;
     file.responseDict = containers.Map();
-    file.stimulusList = Shuffle(im_nums) %['a', 'b', 'c', 'd'];  % TODO grab big list of files to load instead
-    file.respNum = 1
+    file.stimulusList = Shuffle(im_nums);
+    file.respNum = 1;
 end
 
 saveData(file);
 
 PsychDefaultSetup(2);
+Screen('Preference', 'SkipSyncTests', skipTests);
 
 screenNumber = max(Screen('Screens'));
 
@@ -31,7 +42,6 @@ white = WhiteIndex(screenNumber);
 grey = white / 2;
 black = BlackIndex(screenNumber);
 
-stereoMode = 4;
 %open screen
 [window, windowRect] = PsychImaging('OpenWindow', screenNumber, black,...
     [], 32, 2,stereoMode, [],  kPsychNeed32BPCFloat);
@@ -55,40 +65,14 @@ topPriorityLevel = MaxPriority(window);
 [xCenter, yCenter] = RectCenter(windowRect);
 
 % % Set up alpha-blending for smooth (anti-aliased) lines
-% Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
-
-
-
-
-
-
-% %create stimulus vector of randomized numbers
-% im_nums = 1:length(im_names);
-% im_nums = Shuffle(im_nums);
-
-
-
-% %number of trials
-% numRepeats = 10;
-% 
-% %create stimulus vector
-% stimuli = ['a', 'b', 'c', 'd'];
-% stimVect = Shuffle(repmat(stimuli, 1, numRepeats));
-% 
-% %response vector
-% respVect = zeros(1, 4);
-% 
-% %vector to count # of times stimulus is presented
-% countVect = zeros(1, 4);
-
-
+Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 
 
 
 %Timing information
 
 % Presentation Time in seconds and frames
-presTimeSecs = 2;
+presTimeSecs = 2.5;
 presTimeFrames = round(presTimeSecs / ifi);
 
 % Interstimulus interval time in seconds and frames
@@ -99,10 +83,14 @@ isiTimeFrames = round(isiTimeSecs / ifi);
 waitframes = 1;
 
 
-respIm = imread('responses_image.png'); 
-respIm(:,:,1) = fliplr(respIm(:,:,1));
-respIm(:,:,2) = fliplr(respIm(:,:,2));
-respIm(:,:,3) = fliplr(respIm(:,:,3));
+respIm = imread('responses_image.png');
+if shouldMirrorReverse
+    respIm(:,:,1) = fliplr(respIm(:,:,1));
+    respIm(:,:,2) = fliplr(respIm(:,:,2));
+    respIm(:,:,3) = fliplr(respIm(:,:,3));
+end
+
+respTex = Screen('MakeTexture', window, respIm);
 
  %keyboard info
  
@@ -114,43 +102,44 @@ respIm(:,:,3) = fliplr(respIm(:,:,3));
  down = KbName('DownArrow');
  left = KbName('LeftArrow');
  right = KbName('RightArrow');
-escape = KbName('ESCAPE');
-
+ escape = KbName('ESCAPE');
+ space = KbName('SPACE');
 
 
 
 %Experimental Loop
-
+currentRespNum = file.respNum;
 for trial = 1:length(im_nums)
+
     if file.respNum > length(file.stimulusList)
         saveData(file);
         break
     end
-    %stim = stimVect(trial);
+
     im_num = file.stimulusList(file.respNum);
     im_name = im_names(im_num).name;
-    theImage = fliplr(imread(strcat('~/Desktop/blur_stimuli/', im_name)));
-    
-    
-    
-    Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
+    theImage = imread(strcat('~/Desktop/blur_stimuli/', im_name));
+    if shouldMirrorReverse
+        theImage = fliplr(theImage);
+    end
     
     if trial == 1
-        DrawFormattedText(window, 'Press Any Key To Begin', 'center', 'center', white, [], 1);
+        DrawFormattedText(window, 'Press Any Key To Begin', 'center', 'center', white, [], shouldMirrorReverse);
         Screen('Flip', window);
         KbStrokeWait;
     end
     
     if mod(trial, 200) == 0
-        DrawFormattedText(window, 'You have seen 200 images feel free to take a break'...
-            , 'center', 'center', white, [], 1);
-        DrawFormattedText(window, 'Press any key to resume', 'center', screenYpixels * .6 , white, [], 1);
+        DrawFormattedText(window, 'You have seen 200 images. Feel free to take a break.'...
+            , 'center', 'center', white, [], shouldMirrorReverse);
+        DrawFormattedText(window, 'Press any key to resume', 'center', screenYpixels * .6 , white, [], shouldMirrorReverse);
         Screen('Flip', window);
         KbStrokeWait;
     end
+    
     Screen('DrawDots', window, [xCenter; yCenter], 10, black, [], 2);
     vbl = Screen('Flip', window);
-    
+    shouldRedoPrevious = false;
     for frame = 1:isiTimeFrames - 1
 
         % Draw the fixation point
@@ -158,39 +147,35 @@ for trial = 1:length(im_nums)
 
         % Flip to the screen
         vbl = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
+        [keyIsDown,secs, keyCode] = KbCheck;
+        if keyCode(space)
+            shouldRedoPrevious = true;
+            continue
+        end
     end
     
+    if shouldRedoPrevious
+        file.respNum = currentRespNum - 1;
+        shouldRedoPrevious = false;
+        continue
+    end
+    
+    %make image texture
+    imTex = Screen('MakeTexture', window, theImage);
     for frame = 1:presTimeFrames
-
-%         % Set the right blend function for drawing the gabors
-%         Screen('BlendFunction', window, 'GL_ONE', 'GL_ZERO');
-%         
-%         Screen('TextSize', window, 80);
-%         DrawFormattedText(window, stim, 'center', 'center', white);
-        Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
-        %make image texture
-        imTex = Screen('MakeTexture', window, theImage);
+        
         %draw texture
         Screen('DrawTexture', window, imTex, [], [], 0);
-        
-        
-%         Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
-%         
-%         Screen('DrawDots', window, [xCenter; yCenter], 10, black, [], 2);
-% 
         vbl = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
         
     end
-     
-    Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
-    
-    respTex = Screen('MakeTexture', window, respIm);
+    Screen('Close', imTex);
 
     Screen('DrawTexture', window, respTex);
 
     Screen('TextSize', window, 40);
     
-    DrawFormattedText(window, 'Valid Responses:', 'center', screenYpixels * .1, white, [], 1);
+    DrawFormattedText(window, 'Valid Responses:', 'center', screenYpixels * .1, white, [], shouldMirrorReverse);
     
     vbl = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
 
@@ -203,39 +188,41 @@ for trial = 1:length(im_nums)
            sca;
            return
        elseif keyCode(a)
-           file.responseDict(im_name) = 'a'
-           file.respNum = file.respNum + 1
-           respToBeMade = false
+           file.responseDict(im_name) = 'a';
+           file.respNum = file.respNum + 1;
+           respToBeMade = false;
        elseif keyCode(w)
-           file.responseDict(im_name) = 'w'
-           file.respNum = file.respNum + 1
-           respToBeMade = false
+           file.responseDict(im_name) = 'w';
+           file.respNum = file.respNum + 1;
+           respToBeMade = false;
        elseif keyCode(s)
-           file.responseDict(im_name) = 's'
-           file.respNum = file.respNum + 1
-           respToBeMade = false
+           file.responseDict(im_name) = 's';
+           file.respNum = file.respNum + 1;
+           respToBeMade = false;
        elseif keyCode(d)
-           file.responseDict(im_name) = 'd'
-           file.respNum = file.respNum + 1
-           respToBeMade = false
+           file.responseDict(im_name) = 'd';
+           file.respNum = file.respNum + 1;
+           respToBeMade = false;
        elseif keyCode(up)
-           file.responseDict(im_name) = 'up'
-           file.respNum = file.respNum + 1
-           respToBeMade = false
+           file.responseDict(im_name) = 'up';
+           file.respNum = file.respNum + 1;
+           respToBeMade = false;
        elseif keyCode(down)
-           file.responseDict(im_name) = 'down'
-           file.respNum = file.respNum + 1
-           respToBeMade = false
+           file.responseDict(im_name) = 'down';
+           file.respNum = file.respNum + 1;
+           respToBeMade = false;
        elseif keyCode(right)
-           file.responseDict(im_name) = 'right'
-           file.respNum = file.respNum + 1
-           respToBeMade = false
+           file.responseDict(im_name) = 'right';
+           file.respNum = file.respNum + 1;
+           respToBeMade = false;
        elseif keyCode(left)
-           file.responseDict(im_name) = 'left'
-           file.respNum = file.respNum + 1
-           respToBeMade = false
+           file.responseDict(im_name) = 'left';
+           file.respNum = file.respNum + 1;
+           respToBeMade = false;
        end
     end
+    
+    currentRespNum = file.respNum;
     
 
 end
