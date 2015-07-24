@@ -1,7 +1,7 @@
 close all;
 clear all;
 sca;
-develop_mode = true;
+develop_mode = false;
 if develop_mode
     stereoMode = 0;
     skipTests = 1;
