@@ -34,6 +34,7 @@ saveData(file);
 
 PsychDefaultSetup(2);
 Screen('Preference', 'SkipSyncTests', skipTests);
+HideCursor();
 
 screenNumber = max(Screen('Screens'));
 
@@ -228,12 +229,13 @@ for trial = 1:length(im_nums)
 end
 
 saveData(file);
+ShowCursor();
 sca;
 catch
     sca;
     psychrethrow(psychlasterror);
     error = psychlasterror; error.stack
-    ShowCursor
+    ShowCursor;
 end
 
 
