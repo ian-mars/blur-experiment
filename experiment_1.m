@@ -28,9 +28,8 @@ else  % if this is a new subject, create the file object we'll want to save
     file.responseDict = containers.Map();
     file.stimulusList = Shuffle(im_nums);
     file.respNum = 1;
+    saveData(file);
 end
-
-saveData(file);
 
 PsychDefaultSetup(2);
 Screen('Preference', 'SkipSyncTests', skipTests);
