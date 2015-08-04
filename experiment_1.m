@@ -109,7 +109,7 @@ respTex = Screen('MakeTexture', window, respIm);
 
 %Experimental Loop
 currentRespNum = file.respNum;
-for trial = 1:length(im_nums)
+for trial = 1:length(im_nums)+50
 
     if file.respNum > length(file.stimulusList)
         saveData(file);
