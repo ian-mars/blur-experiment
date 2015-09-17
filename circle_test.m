@@ -5,6 +5,9 @@ sca;
 % Here we call some default settings for setting up Psychtoolbox
 PsychDefaultSetup(2);
 
+LEFT_BUFFER = 0;
+RIGHT_BUFFER = 1;
+
 % Get the screen numbers
 screens = Screen('Screens');
 
@@ -22,6 +25,7 @@ stereoMode = 4;
 [window, windowRect] = PsychImaging('OpenWindow', screenNumber, black,...
     [], 32, 2,stereoMode, [],  kPsychNeed32BPCFloat);
 
+Screen('SelectStereoDrawBuffer', window, RIGHT_BUFFER);
 
 % Get the size of the on screen window
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);

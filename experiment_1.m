@@ -46,6 +46,8 @@ black = BlackIndex(screenNumber);
 [window, windowRect] = PsychImaging('OpenWindow', screenNumber, black,...
     [], 32, 2,stereoMode, [],  kPsychNeed32BPCFloat);
 
+Screen('SelectStereoDrawBuffer', window, 1);
+
 %get screen size
 [screenXpixels, screenYpixels] = Screen('WindowSize', window);
 
