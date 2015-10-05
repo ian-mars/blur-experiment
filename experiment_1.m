@@ -221,6 +221,10 @@ for trial = 1:length(im_nums)+50
            file.responseDict(im_name) = 'left';
            file.respNum = file.respNum + 1;
            respToBeMade = false;
+       elseif keyCode(space)
+           file.responseDict(im_name) = 'space';
+           file.respNum = file.respNum + 1;
+           respToBeMade = false;
        end
     end
     
