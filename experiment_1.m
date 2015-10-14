@@ -100,7 +100,7 @@ respTex = Screen('MakeTexture', window, respIm);
  w = KbName('w');
  s = KbName('s');
  d = KbName('d');
- r = KbName('r');
+ % r = KbName('r');
  up = KbName('UpArrow');
  down = KbName('DownArrow');
  left = KbName('LeftArrow');
@@ -142,7 +142,7 @@ for trial = 1:length(im_nums)+50
     
     Screen('DrawDots', window, [xCenter; yCenter], 10, black, [], 2);
     vbl = Screen('Flip', window);
-    shouldRedoPrevious = false;
+    % shouldRedoPrevious = false;
     for frame = 1:isiTimeFrames - 1
 
         % Draw the fixation point
@@ -151,17 +151,17 @@ for trial = 1:length(im_nums)+50
         % Flip to the screen
         vbl = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
         [keyIsDown,secs, keyCode] = KbCheck;
-        if keyCode(r)
-            shouldRedoPrevious = true;
-            continue
-        end
+%         if keyCode(r)
+%             shouldRedoPrevious = true;
+%             continue
+%         end
     end
     
-    if shouldRedoPrevious
-        file.respNum = currentRespNum - 1;
-        shouldRedoPrevious = false;
-        continue
-    end
+%     if shouldRedoPrevious
+%         file.respNum = currentRespNum - 1;
+%         shouldRedoPrevious = false;
+%         continue
+%     end
     
     %make image texture
     imTex = Screen('MakeTexture', window, theImage);
