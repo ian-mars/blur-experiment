@@ -100,6 +100,7 @@ respTex = Screen('MakeTexture', window, respIm);
  w = KbName('w');
  s = KbName('s');
  d = KbName('d');
+ r = KbName('r');
  up = KbName('UpArrow');
  down = KbName('DownArrow');
  left = KbName('LeftArrow');
@@ -150,7 +151,7 @@ for trial = 1:length(im_nums)+50
         % Flip to the screen
         vbl = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
         [keyIsDown,secs, keyCode] = KbCheck;
-        if keyCode(space)
+        if keyCode(r)
             shouldRedoPrevious = true;
             continue
         end
