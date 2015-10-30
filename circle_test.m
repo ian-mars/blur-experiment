@@ -39,7 +39,7 @@ ifi = Screen('GetFlipInterval', window);
 % Set up alpha-blending for smooth (anti-aliased) lines
 Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 
-im = imread('~/Desktop/blur_stimuli/concave_horizontal_0_center_0_0.png');
+im = imread('~/Desktop/blur_stimuli/horizontal_edge_8_6.png');
 
 imTex = Screen('MakeTexture', window, im);
 

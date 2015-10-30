@@ -74,7 +74,7 @@ Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 %Timing information
 
 % Presentation Time in seconds and frames
-presTimeSecs = 2.5;
+presTimeSecs = 1;
 presTimeFrames = round(presTimeSecs / ifi);
 
 % Interstimulus interval time in seconds and frames
@@ -100,7 +100,7 @@ respTex = Screen('MakeTexture', window, respIm);
  w = KbName('w');
  s = KbName('s');
  d = KbName('d');
- % r = KbName('r');
+%  r = KbName('r');
  up = KbName('UpArrow');
  down = KbName('DownArrow');
  left = KbName('LeftArrow');
@@ -140,14 +140,25 @@ for trial = 1:length(im_nums)+50
         KbStrokeWait;
     end
     
-    Screen('DrawDots', window, [xCenter; yCenter], 10, black, [], 2);
+    Screen('DrawDots', window, [xCenter; yCenter], 10, black, []);
+%     DrawFormattedText(window,'E' [xCenter;yCenter], black); 
     vbl = Screen('Flip', window);
     % shouldRedoPrevious = false;
     for frame = 1:isiTimeFrames - 1
 
         % Draw the fixation point
-        Screen('DrawDots', window, [xCenter; yCenter], 10, white, [], 2);
+        Screen('DrawDots', window, [xCenter;yCenter], 10, white, []);
+        Screen('DrawDots', window, [xCenter;yCenter-10], 10, white, []);
+        Screen('DrawDots', window, [xCenter;yCenter-5], 10, white, []);
+        Screen('DrawDots', window, [xCenter;yCenter+5], 10, white, []);
+        Screen('DrawDots', window, [xCenter;yCenter+10], 10, white, []);
+        Screen('DrawDots', window, [xCenter-10;yCenter], 10, white, []);
+        Screen('DrawDots', window, [xCenter-5;yCenter], 10, white, []);
+        Screen('DrawDots', window, [xCenter+5;yCenter], 10, white, []);
+        Screen('DrawDots', window, [xCenter+10;yCenter], 10, white, []);
 
+
+%         DrawFormattedText(window,+ [xCenter;yCenter], white); 
         % Flip to the screen
         vbl = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
         [keyIsDown,secs, keyCode] = KbCheck;
