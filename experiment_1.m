@@ -43,7 +43,7 @@ grey = white / 2;
 black = BlackIndex(screenNumber);
 
 %open screen
-[window, windowRect] = PsychImaging('OpenWindow', screenNumber, black,...
+[window, windowRect] = PsychImaging('OpenWindow', screenNumber, grey,...
     [], 32, 2,stereoMode, [],  kPsychNeed32BPCFloat);
 
 Screen('SelectStereoDrawBuffer', window, 1);
@@ -66,10 +66,15 @@ topPriorityLevel = MaxPriority(window);
 % Get the centre coordinate of the window
 [xCenter, yCenter] = RectCenter(windowRect);
 
-% % Set up alpha-blending for smooth (anti-aliased) lines
+%  Set up alpha-blending for smooth (anti-aliased) lines
 Screen('BlendFunction', window, 'GL_SRC_ALPHA', 'GL_ONE_MINUS_SRC_ALPHA');
 
-
+%cross info
+fixCrossLen = 20;
+lineWidth = 3;
+xCoords = [-fixCrossLen fixCrossLen 0 0];
+yCoords = [0 0 -fixCrossLen fixCrossLen];
+allCoords = [xCoords; yCoords];
 
 %Timing information
 
@@ -127,7 +132,7 @@ for trial = 1:length(im_nums)+50
     end
     
     if trial == 1
-        DrawFormattedText(window, 'Press Any Key To Begin', 'center', 'center', white, [], shouldMirrorReverse);
+        DrawFormattedText(window, 'Press Any Key To Begin', 'center', 'center', black, [], shouldMirrorReverse);
         Screen('Flip', window);
         KbStrokeWait;
     end
@@ -147,32 +152,17 @@ for trial = 1:length(im_nums)+50
     for frame = 1:isiTimeFrames - 1
 
         % Draw the fixation point
-        Screen('DrawDots', window, [xCenter;yCenter], 10, white, []);
-        Screen('DrawDots', window, [xCenter;yCenter-10], 10, white, []);
-        Screen('DrawDots', window, [xCenter;yCenter-5], 10, white, []);
-        Screen('DrawDots', window, [xCenter;yCenter+5], 10, white, []);
-        Screen('DrawDots', window, [xCenter;yCenter+10], 10, white, []);
-        Screen('DrawDots', window, [xCenter-10;yCenter], 10, white, []);
-        Screen('DrawDots', window, [xCenter-5;yCenter], 10, white, []);
-        Screen('DrawDots', window, [xCenter+5;yCenter], 10, white, []);
-        Screen('DrawDots', window, [xCenter+10;yCenter], 10, white, []);
+        Screen('DrawLines', window, allCoords,...
+                lineWidth, black, [xCenter yCenter], 2);
 
 
-%         DrawFormattedText(window,+ [xCenter;yCenter], white); 
         % Flip to the screen
         vbl = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
         [keyIsDown,secs, keyCode] = KbCheck;
-%         if keyCode(r)
-%             shouldRedoPrevious = true;
-%             continue
-%         end
+
     end
     
-%     if shouldRedoPrevious
-%         file.respNum = currentRespNum - 1;
-%         shouldRedoPrevious = false;
-%         continue
-%     end
+
     
     %make image texture
     imTex = Screen('MakeTexture', window, theImage);
@@ -189,7 +179,7 @@ for trial = 1:length(im_nums)+50
 
     Screen('TextSize', window, 40);
     
-    DrawFormattedText(window, 'Valid Responses:', 'center', screenYpixels * .1, white, [], shouldMirrorReverse);
+    DrawFormattedText(window, 'Valid Responses:', 'center', screenYpixels * .1, black, [], shouldMirrorReverse);
     
     vbl = Screen('Flip', window, vbl + (waitframes - 0.5) * ifi);
 
